@@ -97,6 +97,25 @@ class Pattern(metaclass=abc.ABCMeta):
             return len(value)
         return 1
 
+    def _get_rng(self):
+        identifier = None
+        try:
+            # Walk frames to find an enclosing SeedPattern._iterate()
+            frame = inspect.currentframe()
+            while frame is not None:
+                if (
+                    isinstance(frame.f_locals.get("self"), SeedPattern)
+                    and frame.f_code.co_name == "_iterate"
+                ):
+                    identifier = id(frame)
+                    break
+                frame = frame.f_back
+        finally:
+            del frame
+        if identifier in self._rngs:
+            return self._rngs[identifier]
+        return self._get_stdlib_rng()
+
     def _get_seeded_rng(self, seed: int = 1) -> Iterator[float]:
         while True:
             seed = (seed * 1_103_515_245 + 12345) & 0x7FFFFFFF
