@@ -191,6 +191,7 @@ def find(scsynth_path=None):
         or os.environ.get("SCSYNTH_PATH")
         or supriya.config.get("core", "scsynth_path")
         or "scsynth"
+        or "C:/Program Files/SuperCollider-3.11.2"
     )
     if scsynth_path.is_absolute() and uqbar.io.find_executable(scsynth_path):
         return scsynth_path
